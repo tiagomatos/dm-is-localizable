@@ -143,13 +143,15 @@ module DataMapper
         private
 
           def establish_relationships
+            translation_model.property (configuration.translated_model_belongs_to_name.to_s + "_id").to_sym, Integer, :required => true, :unique_index => :unique_locales
+
+            translation_model.property :locale_tag, String, :required => true, :unique_index => :unique_locales
+
             translation_model.belongs_to configuration.translated_model_belongs_to_name,
-              :repository   => translated_model.repository.name,
-              :unique_index => :unique_locales
+              :repository   => translated_model.repository.name
 
             translation_model.belongs_to :locale, DataMapper::I18n::Locale,
-              :repository   => DataMapper::I18n.locale_repository_name,
-              :unique_index => :unique_locales
+              :repository   => DataMapper::I18n.locale_repository_name
 
             translated_model.has n, configuration.translations, translation_model,
               { :repository => translation_model.repository.name }.merge!(
